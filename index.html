@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>College Essay Coach: From Applicant to Writer</title>
+<style>
+:root{--bg:#f2f6f8;--card:#fff;--ink:#14202b;--mute:#566573;--line:#d5dee5;--acc:#0f766e;--accInk:#fff;--hi:#ffe08a;--ok:#1b7f4b}
+:root[data-theme=dark]{--bg:#0f171e;--card:#18232c;--ink:#e8eff4;--mute:#9db0bd;--line:#2c3b47;--acc:#5eead4;--accInk:#06231f;--hi:#5a4a10;--ok:#6ee7a0}
+*{box-sizing:border-box}
+html{font-size:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25;margin:0 0 .5rem}
+h1{font-size:1.5rem}h2{font-size:1.6rem}h3{font-size:1.1rem;margin-top:1.4rem}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:.6rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between}
+.tools{display:flex;gap:.4rem;align-items:center}
+button,select{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:var(--accInk);border:0;border-radius:8px;padding:.55rem 1rem;font-weight:600}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn:focus-visible,.nav button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.tool{background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:.35rem .7rem;min-width:2.6rem}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:.4rem 0}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+.wrap{max-width:1000px;margin:0 auto;padding:1rem;display:grid;grid-template-columns:230px 1fr;gap:1.2rem}
+.nav{display:flex;flex-direction:column;gap:.3rem;position:sticky;top:5.2rem;align-self:start}
+.nav button{text-align:left;background:transparent;color:var(--ink);border:1.5px solid transparent;border-radius:8px;padding:.5rem .7rem}
+.nav button:hover{background:var(--card)}
+.nav button[aria-current=true]{background:var(--card);border-color:var(--acc);font-weight:700}
+.nav .d{color:var(--ok)}
+main{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.4rem;min-width:0}
+.goal{background:var(--hi);color:var(--ink);padding:.7rem 1rem;border-radius:8px;margin:.8rem 0}
+:root[data-theme=dark] .goal{color:#fff}
+.tech{border-left:4px solid var(--acc);padding:.2rem 1rem;margin:.5rem 0;background:var(--bg);border-radius:0 8px 8px 0}
+label.chk{display:flex;gap:.7rem;align-items:flex-start;padding:.45rem 0;cursor:pointer}
+input[type=checkbox]{width:1.3rem;height:1.3rem;margin-top:.2rem;accent-color:var(--acc);flex:none}
+label.chk.on span{color:var(--mute);text-decoration:line-through}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.7rem}
+textarea{min-height:11rem;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.6rem 0}
+.mute{color:var(--mute);font-size:.9rem}
+.timer{font:700 2rem Georgia,serif;min-width:5rem}
+.note{border:1.5px dashed var(--line);border-radius:8px;padding:.7rem 1rem;margin:1rem 0}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1rem;font:inherit;font-size:.92rem;max-height:20rem;overflow:auto}
+.ex{border-left:4px solid var(--acc);background:var(--bg);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.6rem 0;white-space:pre-line}.ex.weak{border-left-color:var(--line);color:var(--mute)}.ex b{display:block;font-size:.9rem}
+.nav-row{display:flex;justify-content:space-between;margin-top:1.6rem;gap:.6rem}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}.nav{position:static;flex-direction:row;overflow-x:auto;padding-bottom:.3rem}.nav button{white-space:nowrap}}
+</style>
+</head>
+<body>
+<header>
+<h1>College Essay Coach</h1>
+<div class="tools" role="group" aria-label="Display settings">
+<button class="tool" id="fm" aria-label="Smaller text">A−</button>
+<button class="tool" id="fp" aria-label="Larger text">A+</button>
+<button class="tool" id="th" aria-label="Toggle dark mode">Dark</button>
+</div>
+</header>
+<div class="wrap">
+<nav class="nav" id="nav" aria-label="Program sections"></nav>
+<main id="main" tabindex="-1"></main>
+</div>
+<script>
+const S=[
+{t:"Name the Pressure",g:"Let's notice the pressure you're feeling, and gently switch from 'applicant' to 'writer'.",
+steps:["Jot down what you think admissions officers want. There are no wrong answers here","Jot down what scares you most about this essay. Naming it makes it smaller","Read this twice: \"You're not being interviewed. You're introducing yourself.\"","Try the 10-minute freewrite below. Keep going, and don't worry about how it sounds","Fill in your school list: platform, essays needed, word limit, deadline","Before Session 2, collect 3 small observations in a notes app (a thought, a moment, something that made you laugh)"],
+tech:["Start by finding out which platform each school uses (Common App, Coalition, UC, or the school's own).","The Common App essay has a 650-word maximum and is separate from school supplements.","The prompts are doors in, not boxes to squeeze into. Pick whichever one gets you talking.","Prompts and limits can change, so double-check the official site each year."],
+w:"Freewrite: Something I've been thinking about lately that has nothing to do with college.",tm:10,ai:"gen",enc:"Nice start. Just showing up and naming the pressure is real progress."},
+{t:"Mine the Material",g:"Let's find out that you have plenty to write about. We'll build a pile of raw material.",
+steps:["Look over your 3 observations from Session 1","5-minute list: things I'm weirdly good at","5-minute list: objects I'd never throw away","5-minute list: places that feel like mine","5-minute list: things I've changed my mind about","5-minute list: things I explain to people without being asked","Circle the 3 items with the most energy. Pick what excites you, not what sounds impressive","Write about 150 words on 2 of your circled items, as if telling a friend"],
+tech:["The essay shows colleges who you are beyond your grades, activities, and recommendations, so try not to repeat your activities list.","Some topics are common: the big win, the sports injury, the mission trip, a hardship with no reflection. You can still use them! Just bring a fresh angle and your own insight."],
+w:"Paste your lists and your two 150-word pieces here.",tm:5,ai:"brain",enc:"Look at that pile of material! 'Nothing to write about' is rarely true."},
+{t:"Find the Thread",g:"We'll turn a topic into an insight and pick a shape that suits it.",
+steps:["Read your two short pieces aloud. Which one sounds more like you?","Climb the 'so what' ladder: What happened? What did I notice? How did it change the way I see things?","Choose ONE seed topic. It's okay to go with your gut","Sketch a loose shape: a moment, a reflection, a bigger meaning","Write a messy first draft to one specific person. Ignore editing and word count for now"],
+tech:["Some shapes that work: one scene plus reflection; a series of linked moments; a 'thing and what it means' essay; a then-and-now arc. There is no required five-paragraph format.","Try opening inside a moment or a specific detail instead of a quote, a definition, or 'Ever since I was young.' (See the Sample excerpts page for examples.)","Show the moment, then give yourself plenty of room for reflection."],
+w:"Your messy first draft goes here. Messy is welcome!",tm:15,ai:"gen",enc:"A messy first draft is exactly the goal. You've done the hardest part."},
+{t:"Draft Without the Critic",g:"We'll keep drafting and judging apart, then make your sentences stronger.",
+steps:["Read your draft aloud and highlight the lines that sound most like you","Gently mark places where the 'applicant' voice crept in (vague, polished, trying to impress)","Rewrite one of those passages the way you'd say it out loud","Swap one claim like 'I'm resilient' for what you actually did","Choose specific nouns and active verbs; trim filler and fancy thesaurus words","Check that your tense and point of view stay consistent","Revise the whole draft, keeping your best voice moments"],
+tech:["Use dialogue and quotes sparingly, with correct punctuation.","Filler words like 'very', 'really', and 'I think that' can usually go.","One precise detail beats three general statements."],
+w:"Your revised draft goes here.",tm:0,ai:"show",enc:"Your voice is getting clearer. Keep what sounds like you."},
+{t:"Revise for Voice and Insight",g:"We'll sharpen the essay while keeping everything that makes it yours.",
+steps:["Check for specific details instead of general claims","Check for reflection, not just a summary of what you did","Check that the ending lands on an insight, not a neat moral","Trim about 10% of the words, starting with repetition and warm-up sentences","Find the one sentence only you could have written, and protect it","Check transitions. Skip stiff connectors like 'Furthermore' and 'In conclusion'","Vary your paragraph and sentence lengths so it breathes","Bring it within the word limit"],
+tech:["The Common App limit is 650 words and the form won't accept more. Aim for roughly 550-650 unless your prompt says otherwise.","For the ending, try an image, a new perspective, or a hint of what's next. Avoid restating the essay or announcing a big lesson."],
+w:"Your near-final draft goes here.",tm:0,ai:"trim",enc:"Almost there. Your essay now sounds like a real person, and that's what readers remember."},
+{t:"Polish and Own It",g:"Let's finish strong: proofread, check the details, and celebrate the shift you've made.",
+steps:["Read the whole essay aloud and smooth anything that trips you up","Proofread pass 1: spelling and grammar","Proofread pass 2: punctuation","Proofread pass 3: formatting (try reading sentences backward, or use text-to-speech)","Confirm it fits the prompt and the word limit","Paste it into the platform's text box and check italics, symbols, and line breaks","Make sure no school name from a supplement is left behind","Ask one trusted reader for a last look","Save a backup copy","Reflect: How has your idea of this essay changed since Session 1?"],
+tech:["Add a title only if the platform allows or asks for one.","The essay needs to be your own work. Feedback from people and AI is great; having someone or something else write or rewrite it is not."],
+w:"Your final essay and your reflection go here.",tm:0,ai:"final",enc:"You did it. You started as an applicant and finished as a writer. Be proud of that."}
+];
+const SM=[
+{h:"Openings: from general to specific",a:"Ever since I was young, I have been passionate about cooking, and it has taught me the value of hard work.",b:"The garlic was burning before I noticed the smoke alarm, and my little brother, standing on a chair with a wooden spoon, was calmly asking whether this counted as 'blackened.'",w:"The first opening announces a feeling. The second drops us into a moment with a real person and a real detail, plus a bit of humor. We already learn something about the writer: distracted, a little chaotic, and clearly close to their brother."},
+{h:"Show, don't tell",a:"I am a determined person who never gives up.",b:"The fourth time my code crashed, I copied the error message onto a sticky note, pressed it above my desk, and went to bed. In the morning it was the first thing I read.",w:"The stronger version never uses the word 'determined', yet we believe it. Specific actions are more convincing than claims."},
+{h:"Adding reflection after a scene",b:"My grandfather never explained how to fold a paper crane. He folded slowly and let me watch until my hands began to copy his.\n\nI used to think teaching meant explaining. Now I suspect it sometimes means showing up with patience and letting someone watch. It's how I tutor my cousin these days: fewer speeches, more folding.",w:"The scene gives us a picture. The second paragraph tells us what the writer took from it and how it changed what they do. That's the 'so what' ladder in action."},
+{h:"Endings: land on an image",a:"In conclusion, this experience taught me that everyone should follow their dreams.",b:"Last week I found the sticky note at the back of a drawer, curled and faded. I pressed it back above my desk, a little crooked, ready for the next crash.",w:"The stronger ending trusts the reader. It returns to an earlier detail and quietly shows how the writer has changed, with no lecture."}
+];
+const P=[
+{id:"gen",n:"General feedback",d:"A first read of any draft.",p:"I'm a high school student writing a college application essay. Give me FEEDBACK ONLY. Do not rewrite my sentences or write new ones for me; the essay must stay my own work.\n\nTell me:\n1. What is working best, and why\n2. Where I sound like I'm trying to impress instead of sounding like myself\n3. Where I need more specific detail\n4. Where reflection (what I learned or how I see things) is missing\n5. Three questions that would help me dig deeper\n\nPrompt and word limit: {{INFO}}\n\nMy draft:\n{{DRAFT}}"},
+{id:"brain",n:"Brainstorm with questions",d:"Find topics without having them handed to you.",p:"I'm a high school student looking for a college essay topic. Do NOT suggest topics. Instead, read my notes and ask me 8 questions that help me notice what I care about, what surprised me, or what I changed my mind about. Then tell me which items in my notes seem to have the most energy and why.\n\nPrompt (if any): {{INFO}}\n\nMy notes:\n{{DRAFT}}"},
+{id:"voice",n:"Voice check",d:"Does it sound like you?",p:"Act as a writing coach. Read my college essay draft and mark (by quoting short phrases) where my voice sounds most natural and where it sounds stiff, generic, or performed. Explain each in one sentence. Do not rewrite anything.\n\nMy draft:\n{{DRAFT}}"},
+{id:"show",n:"Show vs. tell",d:"Find claims that need detail.",p:"List every sentence in my draft that TELLS (claims a quality or feeling, like 'I'm determined') instead of SHOWING. For each, ask me one question about a specific moment or detail I could use instead. Do not write the replacement sentences.\n\nMy draft:\n{{DRAFT}}"},
+{id:"struct",n:"Structure and opening",d:"Shape, flow, and the first lines.",p:"Evaluate the structure of my college essay. Tell me: (a) whether my opening starts in a specific moment, (b) the balance between scene and reflection, (c) whether each paragraph flows into the next, (d) whether the ending lands on insight or a tidy moral. Give suggestions as questions or short notes, not rewritten text.\n\nMy draft:\n{{DRAFT}}"},
+{id:"trim",n:"Cut to the word limit",d:"Find what to trim.",p:"My essay must be within this limit: {{INFO}}. Tell me my current word count, then point to the sentences or phrases that are redundant, filler, or throat-clearing and could be cut. Warn me about any details that carry my voice and should be kept. Do not rewrite for me.\n\nMy draft:\n{{DRAFT}}"},
+{id:"fit",n:"Prompt fit",d:"Does it answer the question?",p:"Here is the essay prompt: {{INFO}}\n\nDoes my draft answer it clearly? Explain where it does, where it drifts, and what one change would tighten the fit. Feedback only; do not rewrite.\n\nMy draft:\n{{DRAFT}}"},
+{id:"proof",n:"Proofread only",d:"Spelling, grammar, punctuation.",p:"Proofread my essay. List only errors in spelling, grammar, punctuation, and tense consistency, quoting each one and naming the problem. Do not change my style, word choices, or voice, and do not give a corrected full version.\n\nMy draft:\n{{DRAFT}}"},
+{id:"final",n:"Final review",d:"A last admissions-reader view.",p:"Read my essay as a tired admissions officer on their 40th essay of the day. Tell me: what you'd remember a day later, what you learned about me as a person, and what (if anything) felt generic. Then give me a one-line yes or no: does it sound like one real teenager? Feedback only; do not rewrite.\n\nMy draft:\n{{DRAFT}}"}
+];
+let st,view="home",pid="gen",tmr=null;
+const $=s=>document.querySelector(s);
+const ld=()=>{try{return JSON.parse(localStorage.getItem("cec")||"{}")}catch(e){return{}}};
+st=Object.assign({chk:{},txt:{},draft:"",info:"",fs:100,dark:null},ld());
+const sv=()=>{try{localStorage.setItem("cec",JSON.stringify(st))}catch(e){}};
+const wc=t=>(t.trim().match(/\S+/g)||[]).length;
+function applyDisplay(){
+ const dark=st.dark===null?matchMedia("(prefers-color-scheme:dark)").matches:st.dark;
+ document.documentElement.dataset.theme=dark?"dark":"light";
+ document.documentElement.style.fontSize=st.fs+"%";
+ $("#th").textContent=dark?"Light":"Dark";
+}
+function prog(i){const n=S[i].steps.length;let c=0;for(let k=0;k<n;k++)if(st.chk[i+"_"+k])c++;return[c,n]}
+function total(){let c=0,n=0;S.forEach((_,i)=>{const p=prog(i);c+=p[0];n+=p[1]});return Math.round(100*c/n)}
+function nav(){
+ let h=`<button data-v="home" ${view=="home"?'aria-current="true"':''}>Start here</button>`;
+ S.forEach((s,i)=>{const p=prog(i);h+=`<button data-v="${i}" ${view==i?'aria-current="true"':''}>Session ${i+1}: ${s.t} ${p[0]==p[1]?'<span class="d">✓</span>':''}</button>`});
+ h+=`<button data-v="samples" ${view=="samples"?'aria-current="true"':''}>Sample excerpts</button><button data-v="ai" ${view=="ai"?'aria-current="true"':''}>AI feedback prompts</button><button data-v="list" ${view=="list"?'aria-current="true"':''}>Final checklist</button>`;
+ $("#nav").innerHTML=h;
+ $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+}
+function go(v){clearInterval(tmr);view=isNaN(v)?v:+v;render();$("#main").focus();scrollTo(0,0)}
+function pbar(){return`<div class="bar" role="progressbar" aria-valuenow="${total()}" aria-valuemin="0" aria-valuemax="100"><i style="width:${total()}%"></i></div><div class="mute">Overall progress: ${total()}%</div>`}
+function render(){
+ nav();const m=$("#main");
+ if(view=="home"){
+  m.innerHTML=`<h2>From applicant to writer</h2>${pbar()}
+  <p>Welcome! If this essay feels hard, you are in very good company, and it says nothing about your ability. Many students get stuck because they write like an <b>applicant</b>: someone being judged, hunting for the "right" topic. Here, we will gently practice writing as a <b>writer</b>: someone who notices things and shares a perspective.</p>
+  <div class="goal">The shift: from "What do admissions officers want to hear?" to "What do I actually have to say?"</div>
+  <h3>How it works</h3>
+  <p>There are six sessions of about 45-60 minutes each. Take them at your own pace. Every session has friendly steps to tick off, a timed writing activity, a Technical Focus on format and rules, and a writing space that saves automatically on this device.</p>
+  <h3>Tips</h3>
+  <ul><li>Use <b>A+</b> and <b>A−</b> at the top to change text size, and the button beside them for dark mode.</li><li>Go in order, but feel free to jump back whenever you get stuck. There is always more material waiting in Session 2.</li><li>Peek at the <b>Sample excerpts</b> any time you want to see what stronger writing can look like.</li><li>AI can be a helpful coach for <b>feedback and questions</b>. It should never write or rewrite your essay for you. Ready-made prompts are built in to make that easy.</li></ul>
+  <div class="row"><button class="btn" id="st">Begin Session 1</button></div>
+  <p class="mute">Tip: confirm the current prompts and word limits on each platform's official site.</p>`;
+  $("#st").onclick=()=>go(0);
+ }else if(view=="ai"){aiView(m)}
+ else if(view=="samples"){
+  m.innerHTML=`<h2>Sample excerpts</h2><p>These short examples were written for this program to show what the ideas look like in practice. Use them to learn from, not to copy. Your own voice and your own details will always be better. For full essays, many colleges publish essays that worked on their admissions websites.</p>`+SM.map(x=>`<h3>${x.h}</h3>${x.a?`<div class="ex weak"><b>Starting point</b>${x.a}</div>`:""}<div class="ex"><b>${x.a?"Stronger version":"Example"}</b>${x.b}</div><p><b>Why it works:</b> ${x.w}</p>`).join("")+`<div class="note">Try it: pick one of your own sentences from a draft and rewrite it the way the stronger versions do.</div>`;
+ }
+ else if(view=="list"){
+  const L=["Platform, prompt, and word limit confirmed for each school","Opening starts with a specific moment or detail","Reflection is present, not just events","Details are concrete (names, objects, senses)","Voice sounds like me at my best","Ending lands without a tidy moral","Within the word limit","Proofread aloud and on screen","Correct school name and prompt for each submission"];
+  m.innerHTML=`<h2>Final checklist</h2><p class="mute">Come back to this at the start and again right before you submit. You can do this!</p>`+L.map((t,k)=>chk("L_"+k,t)).join("");bind(m);
+ }else sessView(m);
+}
+function chk(key,t){return`<label class="chk ${st.chk[key]?'on':''}"><input type="checkbox" data-k="${key}" ${st.chk[key]?'checked':''}><span>${t}</span></label>`}
+function bind(m){m.querySelectorAll("input[type=checkbox]").forEach(c=>c.onchange=()=>{st.chk[c.dataset.k]=c.checked;sv();c.closest("label").classList.toggle("on",c.checked);nav();const p=m.querySelector(".pp");if(p&&typeof view=="number"){const q=prog(view);p.textContent=q[0]+" of "+q[1]+" steps done"}})}
+function sessView(m){
+ const i=view,s=S[i],t=st.txt[i]||"";
+ m.innerHTML=`<h2>Session ${i+1}: ${s.t}</h2><div class="goal"><b>Goal:</b> ${s.g}</div>
+ <div class="mute pp">${prog(i)[0]} of ${prog(i)[1]} steps done</div>
+ <h3>Your steps</h3>${s.steps.map((x,k)=>chk(i+"_"+k,x)).join("")}
+ <h3>Technical focus</h3><div class="tech">${s.tech.map(x=>`<p>${x}</p>`).join("")}</div>
+ ${s.tm?`<h3>Timed writing</h3><div class="row"><span class="timer" id="tt" aria-live="off">${fmt(s.tm*60)}</span><button class="btn" id="ts">Start</button><button class="btn alt" id="tr">Reset</button><span class="mute">${s.tm} minutes. Keep your pen moving. Messy is perfect.</span></div>`:""}
+ <h3>Your writing space</h3><p class="mute">${s.w}</p>
+ <textarea id="ta" aria-label="Writing space">${t.replace(/</g,"&lt;")}</textarea>
+ <div class="row"><span class="mute" id="wc">${wc(t)} words</span><button class="btn alt" id="dl">Save as .txt</button><button class="btn" id="ai">Get AI feedback on this</button></div>
+ <div class="note">${s.enc}</div>
+ <div class="nav-row"><button class="btn alt" id="pv" ${i==0?'disabled':''}>Previous session</button><button class="btn" id="nx">${i==5?'Final checklist':'Next session'}</button></div>`;
+ bind(m);
+ const ta=$("#ta");ta.oninput=()=>{st.txt[i]=ta.value;sv();$("#wc").textContent=wc(ta.value)+" words"};
+ $("#dl").onclick=()=>dl(ta.value,"session-"+(i+1)+".txt");
+ $("#ai").onclick=()=>{st.draft=ta.value;pid=s.ai;sv();go("ai")};
+ $("#pv").onclick=()=>go(i-1);$("#nx").onclick=()=>go(i==5?"list":i+1);
+ if(s.tm)timer(s.tm*60);
+}
+const fmt=n=>Math.floor(n/60)+":"+String(n%60).padStart(2,"0");
+function timer(total){
+ let left=total,run=false;const tt=$("#tt"),b=$("#ts");
+ b.onclick=()=>{run=!run;b.textContent=run?"Pause":"Resume";clearInterval(tmr);if(run)tmr=setInterval(()=>{left--;tt.textContent=fmt(left);if(left<=0){clearInterval(tmr);run=false;b.textContent="Start";tt.textContent="Time!";left=total}},1000)};
+ $("#tr").onclick=()=>{clearInterval(tmr);run=false;left=total;tt.textContent=fmt(total);b.textContent="Start"};
+}
+function dl(text,name){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"}));a.download=name;a.click()}
+function aiView(m){
+ m.innerHTML=`<h2>AI feedback prompts</h2>
+ <div class="note"><b>A few friendly ground rules.</b> Think of AI as a coach, not a ghostwriter. Every prompt below asks only for feedback and questions, so your essay stays truly yours. Try not to paste personal details you would not want shared, and check with your counselor about school and college policies on AI use.</div>
+ <h3>1. Choose a prompt</h3><select id="ps" aria-label="Prompt type">${P.map(p=>`<option value="${p.id}" ${p.id==pid?'selected':''}>${p.n}: ${p.d}</option>`).join("")}</select>
+ <h3>2. Essay prompt and word limit</h3><input type="text" id="in" placeholder="e.g. Common App prompt 5, 650 words max" value="${(st.info||"").replace(/"/g,"&quot;")}">
+ <h3>3. Paste your writing</h3><textarea id="dr" aria-label="Your writing">${(st.draft||"").replace(/</g,"&lt;")}</textarea>
+ <h3>4. Copy and paste into your AI tool</h3><pre id="out"></pre>
+ <div class="row"><button class="btn" id="cp">Copy this prompt</button><span class="mute" id="ms"></span></div>
+ <h3>After you get feedback</h3><ul><li>Choose the 2 or 3 comments that feel true to you. It is fine to set the rest aside.</li><li>Make changes in your own words.</li><li>Feel free to ask a follow-up, like "Why did you flag that sentence?"</li><li>Read it aloud once more to make sure it still sounds like you.</li></ul>`;
+ const up=()=>{st.info=$("#in").value;st.draft=$("#dr").value;pid=$("#ps").value;sv();
+  $("#out").textContent=P.find(p=>p.id==pid).p.replace("{{INFO}}",st.info||"(not specified)").replace("{{DRAFT}}",st.draft||"[paste your writing here]").replace("{{INFO}}",st.info||"(not specified)")};
+ ["#in","#dr","#ps"].forEach(s=>$(s).oninput=up);up();
+ $("#cp").onclick=async()=>{try{await navigator.clipboard.writeText($("#out").textContent);$("#ms").textContent="Copied!"}catch(e){const r=document.createRange();r.selectNodeContents($("#out"));getSelection().removeAllRanges();getSelection().addRange(r);$("#ms").textContent="Selected. Press Ctrl/Cmd+C."}};
+}
+$("#fp").onclick=()=>{st.fs=Math.min(180,st.fs+10);sv();applyDisplay()};
+$("#fm").onclick=()=>{st.fs=Math.max(80,st.fs-10);sv();applyDisplay()};
+$("#th").onclick=()=>{st.dark=document.documentElement.dataset.theme!="dark";sv();applyDisplay()};
+applyDisplay();render();
+</script>
+</body>
+</html>
